@@ -1,0 +1,226 @@
+# Jogo da forca
+
+use "jerimum"
+use "palavras.poti"
+
+# Dimensões da janela do jogo
+var resolucao = [
+	800, 600, 10 # Largura, altura e fps
+]
+
+valores_teclas = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
+
+# Posições iniciais para cenário de letras
+min_x = 240
+min_y = 120
+min_z = 22
+
+#################################
+##### importação dos sprites ####
+#################################
+fundo = Imagem("sprites/background.jpg")
+acertou = Imagem("sprites/acertou.png")
+errou = Imagem("sprites/errou.png")
+imgforca = Imagem("sprites/corda.png")
+linha = Imagem("sprites/linha-horizontal2.png")
+
+cabeca = Imagem("sprites/cabeca.png")
+cabeca2 = Imagem("sprites/cabeca2.png")
+corpo  = Imagem("sprites/corpo.png")
+
+bracoe = Imagem("sprites/bracoe.png") # braço esquerdo
+bracod = Imagem("sprites/bracod.png") # braço direito
+
+pernae = Imagem("sprites/perna.png") # perna esquerda
+pernad = Imagem("sprites/perna.png") # perna direita
+
+var posicao_letras = [[0]]
+var letras_erradas = [""]
+
+# Classe principal
+tipo Forca
+	var categoria_escolhida = ""
+	var palavra_escolhida = ""
+	var c, qtd_espacos = 0
+
+	escolha_categoria()
+		categoria = categorias[ aleatorio(1,categorias.tamanho) ]
+		categoria_escolhida := categoria
+		retorne categoria
+	fim
+
+	escolha_palavra()
+		categoria = escolha_categoria()
+		indice = categorias.posicao( categoria )
+		palavra = palavras[ indice ][ aleatorio(1, palavras[ indice ].tamanho ) ]
+		palavra_escolhida := palavra
+		retorne palavra
+	fim
+
+	gera_cenario()
+
+		incremento_coluna = 120
+		incremento_linha = 60
+		incremento_camada = 1
+
+		var px = min_x
+		var py = min_y
+		var pz = min_z
+
+		var qtd_palavras = 1
+
+		para i de 1 até palavra_escolhida.tamanho faça
+			letra = palavra_escolhida[i]
+			
+			se letra.texto <> " ".texto e letra.texto <> "-".texto então
+				linha.desenhe(px,py,pz,0,0.4,0.3)
+			senão
+				qtd_palavras := qtd_palavras + 1
+			fim
+			
+			posicao_letras := posicao_letras.insira( posicao_letras.tamanho, [px,py,pz] )
+
+			px := px + incremento_coluna
+			pz := pz + incremento_camada
+
+			se px > 650 então
+				px := min_x
+				py := py + incremento_linha
+			fim
+
+		fim
+
+		titulo = Fonte(30)
+		titulo.desenhe("DICA: {categoria_escolhida.cabeca.texto.maiusculo}{categoria_escolhida.cauda} - {qtd_palavras} palavra(s)", 250, 90, 21, Cor.BRANCO)
+	fim
+
+	checa_letra(lt: Texto)
+		var ret = falso
+
+		para i de 1 até palavra_escolhida.tamanho faça
+			se palavra_escolhida[i].texto == lt então
+				ret := verdadeiro
+				c := c + 1
+			fim
+		fim
+		retorne ret
+	fim
+
+	mostra_letra(lt: Texto)
+		var p = 1
+		para i de 1 até palavra_escolhida.tamanho faça
+			se palavra_escolhida[i].texto == lt.texto então
+				var posicao = posicao_letras[i]
+				l = Fonte(25)
+				l.desenhe(lt, posicao[1] + 43, posicao[2] + 30, 45, Cor.BRANCO)
+			senão
+				letras_erradas := letras_erradas.insira( letras_erradas.tamanho, lt )
+			fim
+			p := p + 1
+		fim
+	fim
+
+fim
+
+tipo Personagem
+	desenha_corpo(erros: Inteiro)
+		se erros > 1 então
+			corpo.desenhe(115,250,10, 0,0.2, 0.2)
+		fim
+		se erros > 0 então
+			cabeca.desenhe(100,155,11, 0,0.1, 0.1)
+		fim
+
+		se erros > 2 então
+			bracoe.desenhe(100,255,12, 1.2,0.2, 0.2)
+		fim
+
+		se erros > 3 então
+			bracod.desenhe(170,262,6, 0,0.2, 0.2)
+		fim
+
+		se erros > 4 então
+			pernae.desenhe(133,327,8, 0,0.2, 0.2)
+		fim
+
+		se erros > 5 então
+			pernad.desenhe(163,327,7, 0,0.2, 0.2)
+		fim
+
+		se erros > 6 então
+			cabeca2.desenhe(100,155,13, 0,0.1, 0.1)
+		fim
+	fim
+fim
+
+#################################
+###### chamada de classes #######
+#################################
+personagem = Personagem()
+forca = Forca()
+
+categoria = forca.escolha_categoria()
+palavra = forca.escolha_palavra()
+
+escreva "Palavra: {palavra}"
+
+var erros = 0
+var ultima_tecla = ""
+var corretas = [""]
+
+var encontrado = falso
+
+atualizar()
+	se encontrado == falso então
+		personagem.desenha_corpo(erros)
+		forca.gera_cenario()
+
+		var teclas = [
+			Teclado.TECLA_A, Teclado.TECLA_B, Teclado.TECLA_C, Teclado.TECLA_D, Teclado.TECLA_E, Teclado.TECLA_F, Teclado.TECLA_G, 
+			Teclado.TECLA_H, Teclado.TECLA_I, Teclado.TECLA_J, Teclado.TECLA_K, Teclado.TECLA_L, Teclado.TECLA_M, Teclado.TECLA_N, 
+			Teclado.TECLA_O, Teclado.TECLA_P, Teclado.TECLA_Q, Teclado.TECLA_R, Teclado.TECLA_S, Teclado.TECLA_T, Teclado.TECLA_U, 
+			Teclado.TECLA_V, Teclado.TECLA_W, Teclado.TECLA_X, Teclado.TECLA_Y, Teclado.TECLA_Z
+		]
+
+		para i de 1 até teclas.tamanho faça
+			se teclas[i] == verdadeiro então 
+				letra = valores_teclas[i]
+
+				se letra <> ultima_tecla então
+					se forca.checa_letra(letra) então
+						corretas := corretas.insira( corretas.tamanho, letra )
+					senão
+						erros := erros + 1
+					fim
+					ultima_tecla := letra
+				fim
+			fim
+		fim
+
+		para i de 1 até corretas.cauda.tamanho faça
+			forca.mostra_letra( corretas[i] )
+		fim
+
+		escreva forca.palavra_escolhida.tamanho
+		escreva forca.qtd_espacos
+		
+		se forca.c == forca.palavra_escolhida.tamanho - forca.qtd_espacos então
+			escreva "Palavra encontrada. Carinha salvo"
+			encontrado := verdadeiro
+		fim
+
+		se erros > 6 então
+			errou.desenhe(250, 100, 100)
+		fim
+	senão
+		acertou.desenhe(250, 100, 5)
+	fim
+	
+fim
+
+desenhar()
+	fundo.desenhe(0,0,0,0.0,0.8,0.8)
+	imgforca.desenhe(100,0,1, 0,0.2,0.2)
+fim
+
+jogo.iniciar("Jogo da Forca", resolucao[1], resolucao[2], atualizar, desenhar, resolucao[3])

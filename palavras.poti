@@ -1,0 +1,46 @@
+# Categorias das palavras. Serve como a dica
+categorias = [
+	"animal",
+	"roupa",
+	"fruta",
+	"cor",
+	"time"
+]
+
+# Palavras
+# O sub-array com as palavras é relativo ao index da categoria respectiva
+palavras = [
+	[ # animais
+		"rinoceronte",
+		"cachorro",
+		"papagaio",
+		"gorila",
+	],
+	[ # roupa
+		"camisa",
+		"sapato",
+		"meia",
+		"cachecol",
+		"tenis"
+	],
+	[ # Frutas
+		"melancia",
+		"banana",
+		"goiaba"
+	],
+	[ # Cores
+		"vermelho",
+		"violeta",
+		"branco",
+		"laranja",
+		"rosa"
+	],
+	[
+		"corinthians",
+		"são paulo",
+		"palmeiras",
+		"cruzeiro",
+		"fluminense",
+		"flamengo"
+	]
+]

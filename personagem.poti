@@ -1,0 +1,31 @@
+
+tipo Personagem
+	desenha_corpo(erros: Inteiro)
+		se erros > 1 então
+			corpo.desenhe(115,250,10, 0,0.2, 0.2)
+		fim
+		se erros > 0 então
+			cabeca.desenhe(100,155,11, 0,0.1, 0.1)
+		fim
+
+		se erros > 2 então
+			bracoe.desenhe(100,255,12, 1.2,0.2, 0.2)
+		fim
+
+		se erros > 3 então
+			bracod.desenhe(170,262,6, 0,0.2, 0.2)
+		fim
+
+		se erros > 4 então
+			pernae.desenhe(133,327,8, 0,0.2, 0.2)
+		fim
+
+		se erros > 5 então
+			pernad.desenhe(163,327,7, 0,0.2, 0.2)
+		fim
+
+		se erros > 6 então
+			cabeca2.desenhe(100,155,13, 0,0.1, 0.1)
+		fim
+	fim
+fim
